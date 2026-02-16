@@ -83,4 +83,5 @@ Short, memorable, and focused on understanding — not hype.
 
 ## License
 
-TBD
+TBD...
+
