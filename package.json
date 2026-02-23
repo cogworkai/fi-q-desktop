@@ -1,0 +1,92 @@
+{
+  "name": "fi-q-desktop",
+  "description": "Fi Q: Personal finance; figured out",
+  "version": "0.3.7",
+  "private": true,
+  "dependencies": {
+    "electron": "^40.6.0"
+  },
+  "scripts": {
+    "electron": "electron .",
+    "electron-build": "APPLE_KEYCHAIN_PROFILE=my-app-password-profile electron-builder build -m",
+    "electron-build-mas": "APPLE_KEYCHAIN_PROFILE=my-app-password-profile electron-builder build --mac mas",
+    "electron-dist": "yarn server-dist && electron-builder build -m",
+    "electron-dist-win": "yarn server-dist && electron-builder build -w"
+  },
+  "license": "MIT",
+  "exports": "./app/main.js",
+  "main": "./app/main.js",
+  "type": "module",
+  "build": {
+    "productName": "Fi Q",
+    "appId": "com.cogworkai.fiq",
+    "artifactName": "${productName}.${ext}",
+    "extends": null,
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
+    },
+    "files": [
+      "app/splash.html",
+      "package.json",
+      "./build/**/*",
+      "**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../server/dist/",
+        "to": "lib/",
+        "filter": [
+          "**/**"
+        ]
+      }
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "mas",
+          "arch": [
+            "arm64"
+          ]
+        },
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist",
+      "notarize": true
+    },
+    "mas": {
+      "entitlements": "entitlements.mas.plist",
+      "entitlementsInherit": "entitlements.mas.inherit.plist",
+      "hardenedRuntime": false,
+      "provisioningProfile": "/Users/chris/Downloads/Fi_Q_MAS(1).provisionprofile"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron-is-dev": "^3.0.1",
+    "electron-notarize": "^1.2.2"
+  }
+}

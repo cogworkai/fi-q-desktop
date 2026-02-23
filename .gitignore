@@ -1,0 +1,10 @@
+node_modules
+__pycache__
+.env
+.venv
+.vscode
+.pem
+.p12
+release
+build
+.DS_Store
