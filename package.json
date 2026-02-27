@@ -1,17 +1,16 @@
 {
   "name": "fi-q-desktop",
   "description": "Fi Q: Personal finance; figured out",
-  "version": "0.3.7",
+  "version": "0.3.11",
   "private": true,
   "dependencies": {
-    "electron": "^40.6.0"
+    "electron-is-dev": "^3.0.1"
   },
   "scripts": {
     "electron": "electron .",
     "electron-build": "APPLE_KEYCHAIN_PROFILE=my-app-password-profile electron-builder build -m",
     "electron-build-mas": "APPLE_KEYCHAIN_PROFILE=my-app-password-profile electron-builder build --mac mas",
-    "electron-dist": "yarn server-dist && electron-builder build -m",
-    "electron-dist-win": "yarn server-dist && electron-builder build -w"
+    "electron-build-win": "electron-builder build -w"
   },
   "license": "MIT",
   "exports": "./app/main.js",
@@ -27,20 +26,18 @@
       "output": "release"
     },
     "files": [
-      "app/splash.html",
-      "package.json",
-      "./build/**/*",
-      "**/*"
+      "app/**"
     ],
     "extraResources": [
       {
-        "from": "../server/dist/",
+        "from": "./server/dist/",
         "to": "lib/",
         "filter": [
           "**/**"
         ]
       }
     ],
+    "afterPack": "./scripts/afterPack.cjs",
     "mac": {
       "target": [
         {
@@ -86,7 +83,8 @@
     }
   },
   "devDependencies": {
-    "electron-is-dev": "^3.0.1",
+    "electron": "^40.6.0",
+    "electron-builder": "^26.8.1",
     "electron-notarize": "^1.2.2"
   }
 }
