@@ -1,7 +1,7 @@
 {
   "name": "fi-q-desktop",
   "description": "Fi Q: Personal finance; figured out",
-  "version": "0.3.11",
+  "version": "0.3.14",
   "private": true,
   "dependencies": {
     "electron-is-dev": "^3.0.1"
@@ -37,7 +37,6 @@
         ]
       }
     ],
-    "afterPack": "./scripts/afterPack.cjs",
     "mac": {
       "target": [
         {
