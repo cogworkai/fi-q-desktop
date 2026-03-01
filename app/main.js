@@ -1,6 +1,5 @@
 import { app, BrowserWindow, autoUpdater } from 'electron'
 import { join } from 'path'
-import { existsSync } from 'fs'
 import isDev from 'electron-is-dev'
 import { execFile, exec } from 'child_process'
 import http from 'http'
@@ -45,10 +44,7 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
   })
 })
 
-// MAS builds wrap fi-q-server in a .app bundle; dmg builds use the direct binary
-const API_PROD_BUNDLE = join(process.resourcesPath, 'lib/fi-q-server/fi-q-server.app/Contents/MacOS/fi-q-server')
-const API_PROD_DIRECT = join(process.resourcesPath, 'lib/fi-q-server/fi-q-server')
-const API_PROD_PATH = existsSync(API_PROD_BUNDLE) ? API_PROD_BUNDLE : API_PROD_DIRECT
+const API_PROD_PATH = join(process.resourcesPath, 'lib/fi-q-server/fi-q-server')
 const API_DEV_PATH = join(process.cwd(), './server/dist/fi-q-server/fi-q-server')
 // const INDEX_PATH = join(process.cwd(), '../server/static/index.html')
 const app_instance = app.requestSingleInstanceLock()
