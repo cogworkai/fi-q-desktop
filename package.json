@@ -1,7 +1,7 @@
 {
   "name": "fi-q-desktop",
   "description": "Fi Q: Personal finance; figured out",
-  "version": "0.3.14",
+  "version": "0.3.19",
   "private": true,
   "dependencies": {
     "electron-is-dev": "^3.0.1"
