@@ -1,7 +1,7 @@
 {
   "name": "fi-q-desktop",
   "description": "Fi Q: Personal finance; figured out",
-  "version": "0.3.19",
+  "version": "0.3.21",
   "private": true,
   "dependencies": {
     "electron-is-dev": "^3.0.1"
@@ -11,7 +11,7 @@
     "electron-build": "APPLE_KEYCHAIN_PROFILE=my-app-password-profile electron-builder build -m",
     "electron-build-mas": "APPLE_KEYCHAIN_PROFILE=my-app-password-profile electron-builder build --mac mas",
     "electron-build-win": "electron-builder build -w",
-    "publish": "xcrun altool --upload-app --type osx --file \"release/mas-arm64/Fi Q.pkg\" -u desirejesus@hotmail.com -p @keychain:altoolcreds"
+    "publish-app": "xcrun altool --upload-app --type osx --file \"release/mas-arm64/Fi Q.pkg\" -u desirejesus@hotmail.com -p @keychain:altoolcreds"
   },
   "license": "MIT",
   "exports": "./app/main.js",
@@ -39,6 +39,9 @@
       }
     ],
     "mac": {
+      "extendInfo": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
       "target": [
         {
           "target": "mas",
@@ -63,10 +66,7 @@
       "entitlements": "entitlements.mas.plist",
       "entitlementsInherit": "entitlements.mas.inherit.plist",
       "hardenedRuntime": false,
-      "provisioningProfile": "/Users/chris/Downloads/Fi_Q_MAS(1).provisionprofile",
-      "extendInfo": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+      "provisioningProfile": "/Users/chris/Downloads/Fi_Q_MAS(1).provisionprofile"
     },
     "win": {
       "target": [
