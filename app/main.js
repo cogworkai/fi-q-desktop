@@ -1,4 +1,5 @@
 import { app, BrowserWindow, autoUpdater } from 'electron'
+import log from 'electron-log'
 import { join } from 'path'
 import isDev from 'electron-is-dev'
 import { execFile, exec } from 'child_process'
@@ -13,7 +14,7 @@ const server = "https://fi-q.vercel.app"
 let url = `${server}/update/${process.platform}/${app.getVersion()}`
 if (process.platform === 'darwin') {
   url = `${server}/update/dmg/${app.getVersion()}`
-  console.log(url)
+  log.info(url)
 }
 setInterval(() => {
   autoUpdater.checkForUpdates()
@@ -22,11 +23,11 @@ setInterval(() => {
 autoUpdater.setFeedURL({ url })
 
 autoUpdater.on('update-available', () => {
-  console.log('Update available. Downloading...')
+  log.info('Update available. Downloading...')
 })
 
 autoUpdater.on('update-not-available', () => {
-  console.log('Update not available.')
+  log.info('Update not available.')
 })
 
 autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
@@ -53,7 +54,7 @@ let apiProcess = null
 
 // Start Fi-Q API server
 if (isDev) {
-  console.log('Starting Fi Q server (development)...')
+  log.info('Starting Fi Q server (development)...')
 
   // check if development server port is running on port 8000
   function isPortInUse(port) {
@@ -82,10 +83,10 @@ if (isDev) {
       const portInUse = await isPortInUse(PORT);
       // console.log('Port in use:', portInUse);
       if (portInUse) {
-        console.log(`Port ${PORT} already in use — server not started`)
+        log.info(`Port ${PORT} already in use — server not started`)
         return
       }
-      console.log('Starting API process...');
+      log.info('Starting API process...');
       apiProcess = execFile(
         API_DEV_PATH,
         [],
@@ -94,12 +95,12 @@ if (isDev) {
         },
         (err) => {
           if (err) {
-            console.error('API process failed:', err)
+            log.error('API process failed:', err)
           }
         }
       )
     } catch (err) {
-      console.error("Fi Q server may not be built for the current OS. Repackage and try again.", err)
+      log.error("Fi Q server may not be built for the current OS. Repackage and try again.", err)
     }
   })()
   // apiProcess = execFile(API_DEV_PATH, { windowsHide: false }, (err, stdout, stderr) => {
@@ -107,8 +108,10 @@ if (isDev) {
   // })
   // console.log(JSON.stringify(apiProcess))
 } else {
-  console.log(`Starting Fi Q server (production)... ${API_PROD_PATH}`)
+  log.info(`Starting Fi Q server (production)... ${API_PROD_PATH}`)
   apiProcess = execFile(API_PROD_PATH, { windowsHide: false })
+  apiProcess.stdout.on('data', (data) => log.info(`[fi-q-server] ${data.toString().trim()}`))
+  apiProcess.stderr.on('data', (data) => log.error(`[fi-q-server] ${data.toString().trim()}`))
 }
 
 // Poll until localhost:8000 is up
@@ -192,7 +195,7 @@ function createWindow() {
   try {
     autoUpdater.checkForUpdates()
   } catch (err) {
-    console.error('Failed to check for updates:', err)
+    log.error('Failed to check for updates:', err)
   }
 }
 
@@ -200,12 +203,12 @@ function createWindow() {
 app.whenReady().then(async () => {
   try {
     splash = createSplash();
-    console.log('Waiting for Fi Q server on https://localhost:8000...')
+    log.info('Waiting for Fi Q server on https://localhost:8000...')
     await waitForServer('https://localhost:8000')
-    console.log('Fi Q server is ready.')
+    log.info('Fi Q server is ready.')
     createWindow()
   } catch (err) {
-    console.error('Failed to connect to Fi Q server:', err)
+    log.error('Failed to connect to Fi Q server:', err)
     app.quit()
   }
 

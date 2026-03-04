@@ -1,25 +1,27 @@
 {
   "name": "fi-q-desktop",
   "description": "Fi Q: Personal finance; figured out",
-  "version": "0.3.21",
-  "gitCommit": "",
+  "version": "0.3.28",
+  "gitCommit": "9482b66",
   "private": true,
   "dependencies": {
-    "electron-is-dev": "^3.0.1"
+    "electron-is-dev": "^3.0.1",
+    "electron-log": "^5.4.3"
   },
   "scripts": {
     "electron": "electron .",
     "electron-build": "APPLE_KEYCHAIN_PROFILE=my-app-password-profile electron-builder build -m",
     "electron-build-mas": "APPLE_KEYCHAIN_PROFILE=my-app-password-profile electron-builder build --mac mas",
     "electron-build-win": "electron-builder build -w",
-    "publish-app": "xcrun altool --upload-app --type osx --file \"release/mas-arm64/Fi Q.pkg\" -u desirejesus@hotmail.com -p @keychain:altoolcreds"
+    "bump-patch-version": "./scripts/bump_version.sh",
+    "publish-app": "xcrun altool --upload-app --type osx --file \"release/mas-arm64/Fi Q.pkg\" -u desirejesus@hotmail.com -p @keychain:altoolcreds",
+    "release": "yarn bump-patch-version && yarn electron-build-mas && yarn publish-app"
   },
   "license": "MIT",
   "exports": "./app/main.js",
   "main": "./app/main.js",
   "type": "module",
   "build": {
-    "beforeBuild": "./scripts/beforeBuild.js",
     "productName": "Fi Q",
     "appId": "com.cogworkai.fiq",
     "artifactName": "${productName}.${ext}",
