@@ -2,10 +2,10 @@ import { app, BrowserWindow, autoUpdater } from 'electron'
 import log from 'electron-log'
 import { join } from 'path'
 import isDev from 'electron-is-dev'
-import { execFile, exec } from 'child_process'
+import { spawn, exec } from 'child_process'
 import http from 'http'
 import https from 'https'
-import process, { stderr } from 'process';
+import process from 'process';
 import { shell } from 'electron'
 import net from 'net';
 
@@ -87,31 +87,22 @@ if (isDev) {
         return
       }
       log.info('Starting API process...');
-      apiProcess = execFile(
-        API_DEV_PATH,
-        [],
-        {
-          windowsHide: false
-        },
-        (err) => {
-          if (err) {
-            log.error('API process failed:', err)
-          }
-        }
-      )
+      apiProcess = spawn(API_DEV_PATH, [], { windowsHide: false })
+      apiProcess.stdout.on('data', (data) => log.info(`[fi-q-server] ${data.toString().trim()}`))
+      apiProcess.stderr.on('data', (data) => log.error(`[fi-q-server] ${data.toString().trim()}`))
+      apiProcess.on('error', (err) => log.error('API process failed:', err))
+      apiProcess.on('close', (code) => log.info(`API process exited with code ${code}`))
     } catch (err) {
       log.error("Fi Q server may not be built for the current OS. Repackage and try again.", err)
     }
   })()
-  // apiProcess = execFile(API_DEV_PATH, { windowsHide: false }, (err, stdout, stderr) => {
-  //   if(err){ throw err }
-  // })
-  // console.log(JSON.stringify(apiProcess))
 } else {
   log.info(`Starting Fi Q server (production)... ${API_PROD_PATH}`)
-  apiProcess = execFile(API_PROD_PATH, { windowsHide: false })
+  apiProcess = spawn(API_PROD_PATH, [], { windowsHide: false })
   apiProcess.stdout.on('data', (data) => log.info(`[fi-q-server] ${data.toString().trim()}`))
   apiProcess.stderr.on('data', (data) => log.error(`[fi-q-server] ${data.toString().trim()}`))
+  apiProcess.on('error', (err) => log.error('API process failed:', err))
+  apiProcess.on('close', (code) => log.info(`API process exited with code ${code}`))
 }
 
 // Poll until localhost:8000 is up
