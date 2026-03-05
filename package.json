@@ -1,8 +1,9 @@
 {
   "name": "fi-q-desktop",
+  "productName": "Fi Q Desktop",
   "description": "Fi Q: Personal finance; figured out",
-  "version": "0.3.28",
-  "gitCommit": "9482b66",
+  "version": "0.3.32",
+  "gitCommit": "f53977e",
   "private": true,
   "dependencies": {
     "electron-is-dev": "^3.0.1",

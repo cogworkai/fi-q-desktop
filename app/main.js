@@ -1,6 +1,7 @@
-import { app, BrowserWindow, autoUpdater } from 'electron'
+import { app, BrowserWindow, autoUpdater, Menu, nativeImage } from 'electron'
 import log from 'electron-log'
-import { join } from 'path'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
 import isDev from 'electron-is-dev'
 import { spawn, exec } from 'child_process'
 import http from 'http'
@@ -190,8 +191,42 @@ function createWindow() {
   }
 }
 
+// Application menu
+const menuTemplate = [
+  {
+    label: app.name,
+    submenu: [
+      { role: 'about' },
+      { type: 'separator' },
+      {
+        label: 'Open Log File',
+        icon: nativeImage.createFromPath(fileURLToPath(new URL('./assets/log-icon.png', import.meta.url))).resize({ width: 16, height: 16 }),
+        click: () => {
+          const logPath = log.transports.file.getFile().path
+          shell.showItemInFolder(logPath)
+        }
+      },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideOthers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
+  },
+  { role: 'fileMenu' },
+  { role: 'editMenu' },
+  { role: 'viewMenu' },
+  { role: 'windowMenu' }
+]
+
 // Wait for Electron ready and server startup
 app.whenReady().then(async () => {
+  const menu = Menu.buildFromTemplate(menuTemplate)
+  Menu.setApplicationMenu(menu)
+
   try {
     splash = createSplash();
     log.info('Waiting for Fi Q server on https://localhost:8000...')
