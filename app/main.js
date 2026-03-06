@@ -18,7 +18,11 @@ if (process.platform === 'darwin') {
   log.info(url)
 }
 setInterval(() => {
-  autoUpdater.checkForUpdates()
+  try {
+    autoUpdater.checkForUpdates()
+  } catch (err) {
+    log.error('Failed to check for updates:', err)
+  }
 }, 60000 * 60 * 8) // check for updates every 8 hours
 
 autoUpdater.setFeedURL({ url })
@@ -44,6 +48,10 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
   dialog.showMessageBox(dialogOpts).then((returnValue) => {
     if (returnValue.response === 0) autoUpdater.quitAndInstall()
   })
+})
+
+autoUpdater.on('error', (err) => {
+  log.error('Auto-updater error:', err)
 })
 
 const API_PROD_PATH = join(process.resourcesPath, 'lib/fi-q-server/fi-q-server')
