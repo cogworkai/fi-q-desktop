@@ -14,7 +14,7 @@ import net from 'net';
 const server = "https://fi-q.vercel.app"
 let url = `${server}/update/${process.platform}/${app.getVersion()}`
 if (process.platform === 'darwin') {
-  url = `${server}/update/dmg/${app.getVersion()}`
+  url = `${server}/update/darwin_arm64/${app.getVersion()}`
   log.info(url)
 }
 setInterval(() => {
