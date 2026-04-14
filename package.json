@@ -17,7 +17,9 @@
     "bump-patch-version": "./scripts/bump_version.sh",
     "publish-app": "xcrun altool --upload-app --type osx --file \"release/mas-arm64/Fi Q.pkg\" -u desirejesus@hotmail.com -p @keychain:altoolcreds",
     "publish-gh-release": "./scripts/publish_release.sh",
-    "release": "yarn bump-patch-version && yarn electron-build-mas && yarn publish-app"
+    "release": "yarn bump-patch-version && yarn electron-build-mas && yarn publish-app",
+    "release-major": "yarn bump-major-version && yarn electron-build-mas && yarn publish-app",
+    "release-minor": "yarn bump-minor-version && yarn electron-build-mas && yarn publish-app"
   },
   "license": "MIT",
   "exports": "./app/main.js",

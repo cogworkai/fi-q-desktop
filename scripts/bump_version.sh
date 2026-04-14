@@ -1,5 +1,5 @@
 #!/bin/bash
-# Bumps the patch version and updates git_commit in package.json
+# Bumps the major, minor, or patch version and updates git_commit in package.json
 set -e
 
 PACKAGE_JSON="$(dirname "$0")/../package.json"
@@ -16,9 +16,29 @@ if [ -z "$CURRENT" ]; then
   exit 1
 fi
 
-# Bump patch
+BUMP_TYPE="${1:-patch}"
+
+# Bump version
 IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
-NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+case "$BUMP_TYPE" in
+  major)
+    MAJOR=$((MAJOR + 1))
+    MINOR=0
+    PATCH=0
+    ;;
+  minor)
+    MINOR=$((MINOR + 1))
+    PATCH=0
+    ;;
+  patch)
+    PATCH=$((PATCH + 1))
+    ;;
+  *)
+    echo "Error: Invalid bump type '$BUMP_TYPE'. Use 'major', 'minor', or 'patch'."
+    exit 1
+    ;;
+esac
+NEW_VERSION="$MAJOR.$MINOR.$PATCH"
 
 # Get current git commit hash
 COMMIT=$(git -C "$(dirname "$0")/.." rev-parse --short HEAD)
