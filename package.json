@@ -2,8 +2,8 @@
   "name": "fi-q-desktop",
   "productName": "Fi Q Desktop",
   "description": "Fi Q: Personal finance; figured out",
-  "version": "0.4.1",
-  "gitCommit": "35f6efe",
+  "version": "0.4.2",
+  "gitCommit": "af3e4d5",
   "private": true,
   "dependencies": {
     "electron-is-dev": "^3.0.1",
@@ -30,7 +30,7 @@
   "main": "./app/main.js",
   "type": "module",
   "build": {
-    "buildNumber": "77",
+    "buildVersion": "82",
     "productName": "Fi Q",
     "appId": "com.cogworkai.fiq",
     "artifactName": "${productName}.${ext}",

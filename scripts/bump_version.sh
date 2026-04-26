@@ -1,5 +1,5 @@
 #!/bin/bash
-# Bumps the buildNumber (default) and optionally major, minor, or patch version, and updates gitCommit in package.json
+# Bumps the buildVersion (default) and optionally major, minor, or patch version, and updates gitCommit in package.json
 set -e
 
 PACKAGE_JSON="$(dirname "$0")/../package.json"
@@ -16,10 +16,10 @@ if [ -z "$CURRENT" ]; then
   exit 1
 fi
 
-# Get current buildNumber
-CURRENT_BUILD=$(grep -m1 '"buildNumber"' "$PACKAGE_JSON" | sed 's/.*"buildNumber": "\([0-9][0-9]*\)".*/\1/')
+# Get current buildVersion
+CURRENT_BUILD=$(grep -m1 '"buildVersion"' "$PACKAGE_JSON" | sed 's/.*"buildVersion": "\([0-9][0-9]*\)".*/\1/')
 if [ -z "$CURRENT_BUILD" ]; then
-  echo "Error: could not read buildNumber from $PACKAGE_JSON"
+  echo "Error: could not read buildVersion from $PACKAGE_JSON"
   exit 1
 fi
 
@@ -46,7 +46,7 @@ case "$BUMP_TYPE" in
     NEW_VERSION="$MAJOR.$MINOR.$PATCH"
     ;;
   build)
-    # Only bump buildNumber
+    # Only bump buildVersion
     ;;
   *)
     echo "Error: Invalid bump type '$BUMP_TYPE'. Use 'major', 'minor', 'patch', or 'build'."
@@ -62,8 +62,8 @@ if [ "$CURRENT" != "$NEW_VERSION" ]; then
   sed -i '' "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW_VERSION\"/" "$PACKAGE_JSON"
 fi
 
-# Update buildNumber in package.json
-sed -i '' "s/\"buildNumber\": \"$CURRENT_BUILD\"/\"buildNumber\": \"$NEW_BUILD\"/" "$PACKAGE_JSON"
+# Update buildVersion in package.json
+sed -i '' "s/\"buildVersion\": \"$CURRENT_BUILD\"/\"buildVersion\": \"$NEW_BUILD\"/" "$PACKAGE_JSON"
 
 # Update gitCommit in package.json
 sed -i '' "s/\"gitCommit\": \".*\"/\"gitCommit\": \"$COMMIT\"/" "$PACKAGE_JSON"
@@ -71,5 +71,5 @@ sed -i '' "s/\"gitCommit\": \".*\"/\"gitCommit\": \"$COMMIT\"/" "$PACKAGE_JSON"
 if [ "$CURRENT" != "$NEW_VERSION" ]; then
   echo "[bump_version] Bumped version: $CURRENT → $NEW_VERSION"
 fi
-echo "[bump_version] Bumped buildNumber: $CURRENT_BUILD → $NEW_BUILD"
+echo "[bump_version] Bumped buildVersion: $CURRENT_BUILD → $NEW_BUILD"
 echo "[bump_version] Updated gitCommit: $COMMIT"
