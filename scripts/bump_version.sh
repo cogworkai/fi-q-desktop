@@ -1,75 +1,13 @@
 #!/bin/bash
-# Bumps the buildVersion (default) and optionally major, minor, or patch version, and updates gitCommit in package.json
+# Wrapper script delegating to the centralized bump_version in budget
 set -e
 
-PACKAGE_JSON="$(dirname "$0")/../package.json"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CENTRAL_BUMP="$SCRIPT_DIR/../../budget/app/scripts/bump_version.sh"
 
-if [ ! -f "$PACKAGE_JSON" ]; then
-  echo "Error: package.json not found at $PACKAGE_JSON"
+if [ ! -x "$CENTRAL_BUMP" ]; then
+  echo "Error: Central bump script not found or not executable at $CENTRAL_BUMP"
   exit 1
 fi
 
-# Get current version
-CURRENT=$(grep -m1 '"version"' "$PACKAGE_JSON" | sed 's/.*"\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)".*/\1/')
-if [ -z "$CURRENT" ]; then
-  echo "Error: could not read version from $PACKAGE_JSON"
-  exit 1
-fi
-
-# Get current buildVersion
-CURRENT_BUILD=$(grep -m1 '"buildVersion"' "$PACKAGE_JSON" | sed 's/.*"buildVersion": "\([0-9][0-9]*\)".*/\1/')
-if [ -z "$CURRENT_BUILD" ]; then
-  echo "Error: could not read buildVersion from $PACKAGE_JSON"
-  exit 1
-fi
-
-BUMP_TYPE="${1:-build}"
-NEW_VERSION="$CURRENT"
-NEW_BUILD=$((CURRENT_BUILD + 1))
-
-# Bump version if requested
-IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
-case "$BUMP_TYPE" in
-  major)
-    MAJOR=$((MAJOR + 1))
-    MINOR=0
-    PATCH=0
-    NEW_VERSION="$MAJOR.$MINOR.$PATCH"
-    ;;
-  minor)
-    MINOR=$((MINOR + 1))
-    PATCH=0
-    NEW_VERSION="$MAJOR.$MINOR.$PATCH"
-    ;;
-  patch)
-    PATCH=$((PATCH + 1))
-    NEW_VERSION="$MAJOR.$MINOR.$PATCH"
-    ;;
-  build)
-    # Only bump buildVersion
-    ;;
-  *)
-    echo "Error: Invalid bump type '$BUMP_TYPE'. Use 'major', 'minor', 'patch', or 'build'."
-    exit 1
-    ;;
-esac
-
-# Get current git commit hash
-COMMIT=$(git -C "$(dirname "$0")/.." rev-parse --short HEAD)
-
-# Update version in package.json
-if [ "$CURRENT" != "$NEW_VERSION" ]; then
-  sed -i '' "s/\"version\": \"$CURRENT\"/\"version\": \"$NEW_VERSION\"/" "$PACKAGE_JSON"
-fi
-
-# Update buildVersion in package.json
-sed -i '' "s/\"buildVersion\": \"$CURRENT_BUILD\"/\"buildVersion\": \"$NEW_BUILD\"/" "$PACKAGE_JSON"
-
-# Update gitCommit in package.json
-sed -i '' "s/\"gitCommit\": \".*\"/\"gitCommit\": \"$COMMIT\"/" "$PACKAGE_JSON"
-
-if [ "$CURRENT" != "$NEW_VERSION" ]; then
-  echo "[bump_version] Bumped version: $CURRENT → $NEW_VERSION"
-fi
-echo "[bump_version] Bumped buildVersion: $CURRENT_BUILD → $NEW_BUILD"
-echo "[bump_version] Updated gitCommit: $COMMIT"
+"$CENTRAL_BUMP" "$@"
